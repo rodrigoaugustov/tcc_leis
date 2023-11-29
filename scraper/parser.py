@@ -22,6 +22,7 @@ class Scraper():
         self.data = self.busca_data()
         self.indexacao = None
         self.texto = None
+        self.status = None
 
     def busca_titulo(self):
         return self.norma.xpath('h3/a/text()')[0]
@@ -29,7 +30,7 @@ class Scraper():
     def busca_numero(self):
 
         titulo = self.busca_titulo()
-        number = int(re.search("nº(.*),", titulo).group(1).strip().replace('.', ''))
+        number = int(re.search("\d+", re.search("nº(.*),", titulo).group(1).strip().replace('.', '')).group(0))
         return number
     
     def busca_ementa(self):
@@ -52,6 +53,12 @@ class Scraper():
             logging.warning(f'Não encontrado indexação para: {self.url}')
             return None
         
+    def busca_status(self):
+        try:
+            return self.pagina.find_by_xpath('//*[@id="content"]/div/div[@class="sessao"][3]/span')[1].text
+        except IndexError:
+            return 'Situação não disponível'
+
     def busca_texto(self):
         '''
         Busca o texto de publicação original da norma. Recebe o objeto com a página referente aos dados da norma.
@@ -75,8 +82,11 @@ class Scraper():
         to = Requester(url_texto)
         to.get_valid_page()
 
-        texto_original = to.select('#content > div.textoNorma > div')[0].text
-        
+        try:
+            texto_original = to.select('#content > div.textoNorma > div')[0].text
+        except IndexError:
+            texto_original = ''
+            
         return texto_original
     
     def busca_norma(self):
@@ -85,6 +95,7 @@ class Scraper():
 
         self.pagina = pagina
         self.indexacao = self.busca_indexacao()
+        self.status = self.busca_status()
         self.texto = self.busca_texto()
 
     def gera_objeto(self):
@@ -97,7 +108,8 @@ class Scraper():
                         data_norma=self.data,
                         data_captura=datetime.now(),
                         indexacao=self.indexacao,
-                        texto=self.texto
+                        texto=self.texto,
+                        status=self.status
                        )
         return objeto
     

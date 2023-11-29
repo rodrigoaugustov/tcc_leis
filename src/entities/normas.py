@@ -15,6 +15,7 @@ class Normas(Base):
     url = Column(Text)
     indexacao = Column(Text)
     texto = Column(Text(64000))
+    status = Column(Text)
 
     def __repr__(self):
         return f"<Normas(\
@@ -25,5 +26,6 @@ class Normas(Base):
             data_norma={self.data_norma}, \
             data_captura={self.data_captura}, \
             indexacao='{self.indexacao}', \
-            texto='{self.texto}'\
+            texto='{self.texto}', \
+            status='{self.status}'\
             )>"

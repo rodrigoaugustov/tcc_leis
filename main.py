@@ -7,7 +7,7 @@ from scraper.pipeline import run_pipeline
 
 locale.setlocale(locale.LC_ALL, 'pt_pt.UTF-8')
 
-logging.basicConfig(format='%(levelname)s - %(asctime)s: %(message)s', filename='execucao.log', encoding='utf-8', level=logging.DEBUG)
+logging.basicConfig(format='%(levelname)s - %(asctime)s: %(message)s', filename='execucao.log', encoding='utf-8', level=logging.INFO)
 
 warnings.filterwarnings("ignore")
 
